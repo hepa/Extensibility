@@ -48,10 +48,10 @@ namespace ExtensibilityDLL.Modules.Log
 
 
         public abstract void Trace(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "", [CallerLineNumber] int line = 0);
-        public abstract void Debug(string message, string file = "", string method = "", int line = 0);
-        public abstract void Info(string message, string file = "", string method = "", int line = 0);
-        public abstract void Warn(string message, string file = "", string method = "", int line = 0);
-        public abstract void Error(string message, string file = "", string method = "", int line = 0);
-        public abstract void Fatal(string message, string file = "", string method = "", int line = 0);
+        public abstract void Debug(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "", [CallerLineNumber] int line = 0);
+        public abstract void Info(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "", [CallerLineNumber] int line = 0);
+        public abstract void Warn(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "", [CallerLineNumber] int line = 0);
+        public abstract void Error(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "", [CallerLineNumber] int line = 0);
+        public abstract void Fatal(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "", [CallerLineNumber] int line = 0);
     }
 }
