@@ -14,9 +14,15 @@ namespace ExtensibilityDLL.Modules.Log
 
         public static void Trace(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "", [CallerLineNumber] int line = 0)
         {
+            // creating an entry with level.Trace
+            Write(entry);
+        }
+
+        private static void Write(Log.Entry entry)
+        {
             foreach (var logModule in LogModules)
             {
-                logModule.Trace(message, file, method, line);
+                
             }
         }
     }
