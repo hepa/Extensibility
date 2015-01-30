@@ -28,7 +28,7 @@ namespace ExtensibilityDLL.Modules
         Version Version { get; }
 
         /// <summary>
-        /// Indicates wheter the module is enabled or not.
+        /// Indicates whether the module is enabled or not.
         /// </summary>
         bool IsEnabled { get; set; }
     }
