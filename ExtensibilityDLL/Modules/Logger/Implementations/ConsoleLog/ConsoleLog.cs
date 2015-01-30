@@ -16,14 +16,7 @@ namespace ExtensibilityDLL.Modules.Log
         public override string Name
         {
             get { return "ConsoleLog"; }
-        }
-
-        private void Write(Level level, string message, string file, string method, int line)
-        {            
-            //TODO need to replace with the Log.Entry class in order to the match the logs at all places.
-            Console.WriteLine(string.Format("{0:HH:mm:ss.fff} {1} {2} {3}/{4}():{5} - {6}", DateTime.Now, level.ToString().ToUpper(),
-                    Thread.CurrentThread.ManagedThreadId, Path.GetFileName(file), method, line, message));
-        }
+        }       
 
         public override void Trace(string message, string file, string method, int line)
         {
