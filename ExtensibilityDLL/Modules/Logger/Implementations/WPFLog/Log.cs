@@ -1,56 +1,17 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using ExtensibilityDLL.Modules.Log;
+using ExtensibilityDLL.Modules.Menu;
 
-namespace ExtensibilityDLL.Modules.Log
+namespace WPFLog
 {
-    public abstract class Log : IModule, ILog
+    //TODO outsource this to the Interface.Log class.
+    public class Log : ExtensibilityDLL.Modules.Log.Log, IMenu
     {
-        #region Inherited
-        public abstract string Name { get; }
-
-        public virtual string Icon
-        {
-            get
-            {
-                return "pack://application:,,,/ExtensibilityDLL;component/Images/dll.gif";
-            }
-        }
-
-        public virtual string Developer
-        {
-            get
-            {
-                var company = GetType().Assembly.GetCustomAttributes(typeof(AssemblyCompanyAttribute), true);
-
-                if (company.Length != 0)
-                {
-                    return ((AssemblyCompanyAttribute)company[0]).Company;
-                }
-
-                return null;
-            }
-        }
-
-        public virtual Version Version
-        {
-            get
-            {
-                var version = GetType().Assembly.GetCustomAttributes(typeof(AssemblyVersionAttribute), true);
-
-                if (version.Length != 0)
-                {
-                    return Version.Parse(((AssemblyVersionAttribute)version[0]).Version);
-                }
-
-                return new Version(1, 0);
-            }
-        }
-        #endregion
-
         /// <summary>
         /// The current logging level.
         /// </summary>
@@ -135,6 +96,101 @@ namespace ExtensibilityDLL.Modules.Log
             Info = 1 << 3,
             Debug = 1 << 4,
             Trace = 1 << 5
+        }
+
+        /// <summary>
+        /// Writes the diagnostic message at Trace level.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="file">The file where this message originates from.</param>
+        /// <param name="method">The method where this message originates from.</param>
+        /// <param name="line">The line where this message originates from.</param>
+        public override void Trace(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "", [CallerLineNumber] int line = 0)
+        {            
+            if (IsTraceEnabled) Write(Level.Trace, message, file, method, line);
+        }
+
+        /// <summary>
+        /// Writes the diagnostic message at Debug level.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="file">The file where this message originates from.</param>
+        /// <param name="method">The method where this message originates from.</param>
+        /// <param name="line">The line where this message originates from.</param>
+        public override void Debug(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "", [CallerLineNumber] int line = 0)
+        {
+            if (IsDebugEnabled) Write(Level.Debug, message, file, method, line);
+        }
+
+        /// <summary>
+        /// Writes the diagnostic message at Info level.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="file">The file where this message originates from.</param>
+        /// <param name="method">The method where this message originates from.</param>
+        /// <param name="line">The line where this message originates from.</param>
+        public override void Info(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "", [CallerLineNumber] int line = 0)
+        {
+            if (IsInfoEnabled) Write(Level.Info, message, file, method, line);
+        }
+
+        /// <summary>
+        /// Writes the diagnostic message at Warn level.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="file">The file where this message originates from.</param>
+        /// <param name="method">The method where this message originates from.</param>
+        /// <param name="line">The line where this message originates from.</param>
+        public override void Warn(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "", [CallerLineNumber] int line = 0)
+        {
+            if (IsWarnEnabled) Write(Level.Warn, message, file, method, line);
+        }
+
+        /// <summary>
+        /// Writes the diagnostic message at Error level.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="file">The file where this message originates from.</param>
+        /// <param name="method">The method where this message originates from.</param>
+        /// <param name="line">The line where this message originates from.</param>
+        public override void Error(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "", [CallerLineNumber] int line = 0)
+        {
+            if (IsErrorEnabled) Write(Level.Error, message, file, method, line);
+        }
+
+        /// <summary>
+        /// Writes the diagnostic message at Fatal level.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="file">The file where this message originates from.</param>
+        /// <param name="method">The method where this message originates from.</param>
+        /// <param name="line">The line where this message originates from.</param>
+        public override void Fatal(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "", [CallerLineNumber] int line = 0)
+        {
+            if (IsFatalEnabled) Write(Level.Fatal, message, file, method, line);
+        }
+
+        /// <summary>
+        /// Writes the specified diagnostic message to the log.
+        /// </summary>
+        /// <param name="level">The weight of the message.</param>
+        /// <param name="message">The message to log.</param>
+        /// <param name="file">The file where this message originates from.</param>
+        /// <param name="method">The method where this message originates from.</param>
+        /// <param name="line">The line where this message originates from.</param>
+        private static void Write(Level level, string message, string file, string method, int line)
+        {
+            var log = new Entry(DateTime.Now, level, file, method, line, message);
+
+            Messages.Add(log);
+
+            if (NewMessage != null)
+            {
+                Task.Factory.StartNew(NewMessage, log);
+                //NewMessage(log);
+                //ThreadPool.QueueUserWorkItem(NewMessage, log);
+                //new Thread(new ParameterizedThreadStart(NewMessage)).Start(log);
+            }
         }
 
         public class Entry
@@ -228,55 +284,27 @@ namespace ExtensibilityDLL.Modules.Log
             }
         }
 
-        private static void Write(Level level, string message, string file, string method, int line)
+        public override string Name
         {
-            var log = new Entry(DateTime.Now, level, file, method, line, message);
-
-            Messages.Add(log);
-
-            if (NewMessage != null)
+            get
             {
-                Task.Factory.StartNew(NewMessage, log);
-                //NewMessage(log);
-                //ThreadPool.QueueUserWorkItem(NewMessage, log);
-                //new Thread(new ParameterizedThreadStart(NewMessage)).Start(log);
+                return "WPFLogger";
             }
         }
 
-        public void Trace(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "", [CallerLineNumber] int line = 0)
+        public MenuItem GetMenuItem()
         {
-            Write(Level.Trace, message, file, method, line);
+            var menuItem = new MenuItem();
+            menuItem.Header = "LOGGER";
+            var openLogWindow = new MenuItem() {Header = "Show log window"};
+            openLogWindow.Click += openLogWindow_Click;
+            menuItem.Items.Add(openLogWindow);
+            return menuItem;
         }
 
-
-        public void Debug(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "",
-            [CallerLineNumber] int line = 0)
+        void openLogWindow_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            
-        }
-
-        public void Info(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "",
-            [CallerLineNumber] int line = 0)
-        {
-            
-        }
-
-        public void Warn(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "",
-            [CallerLineNumber] int line = 0)
-        {
-            
-        }
-
-        public void Error(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "",
-            [CallerLineNumber] int line = 0)
-        {
-            
-        }
-
-        public void Fatal(string message, [CallerFilePath] string file = "", [CallerMemberName] string method = "",
-            [CallerLineNumber] int line = 0)
-        {
-            
+            new LoggingWindow().Show();
         }
     }
 }
