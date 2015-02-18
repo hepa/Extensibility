@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using ExtensibilityDLL.Common;
 using Microsoft.Scripting;
 using TaskDialogInterop;
 using Module = ExtensibilityDLL.Modules.IModule;
@@ -62,7 +63,7 @@ namespace ExtensibilityDLL
         private static void LoadExternalModules()
         {
             ExternalModules = new List<Type>();
-            var installPath = Util.InstallPath();
+            var installPath = Utils.InstallPath();
 
             var modules = Directory.GetFiles(installPath, ExternalModuleFileNamePattern);
 
@@ -188,9 +189,10 @@ namespace ExtensibilityDLL
         /// <param name="ex">The thrown exception.</param>
         private static void HandleLoadException(string file, Exception ex)
         {
-            if (ex is SyntaxErrorException)
+            var exception = ex as SyntaxErrorException;
+            if (exception != null)
             {
-                var exp = (SyntaxErrorException) ex;
+                var exp = exception;
                 TaskDialog.Show(new TaskDialogOptions
                 {
                     MainIcon = VistaTaskDialogIcon.Error,
@@ -198,7 +200,7 @@ namespace ExtensibilityDLL
                     MainInstruction = "Failed to parse the module",
                     Content =
                         String.Format("Syntax error in {0} line {1} column {2}:\r\n\r\n{3}", Path.GetFileName(file),
-                            exp.Line, exp.Column, ex.Message),
+                            exp.Line, exp.Column, exception.Message),
                     CustomButtons = new[] {"OK"}
                 });
             }
@@ -226,6 +228,6 @@ namespace ExtensibilityDLL
                     CustomButtons = new[] {"OK"}
                 });
             }
-        }        
+        }
     }
 }

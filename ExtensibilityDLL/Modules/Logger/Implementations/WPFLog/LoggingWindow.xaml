@@ -1,8 +1,8 @@
 ﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="WPFLog.LoggingWindow"
-        Title="Logging" Height="480" Width="1125" MinWidth="550" MinHeight="400" UseLayoutRounding="True" Icon="Images/log.png">
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="ExtensibilityDLL.Modules.Logger.Implementations.WPFLog.LoggingWindow"
+        Title="Logging" Height="480" Width="1125" MinWidth="550" MinHeight="400" UseLayoutRounding="True" >
     <Grid Background="#FFF7F7F7">
         <Label Content="LOGGING" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF4F4F4F" FontSize="20" FontWeight="Bold" Margin="10,10,0,0"/>
         
@@ -13,37 +13,37 @@
                 <ComboBox x:Name="CbLoggingLevel" Width="85" Height="22" BorderThickness="0" Background="#FFFAFAFA" BorderBrush="#FFBFBFBF" Foreground="#FF686868" SelectionChanged="CbLoggingLevel_SelectionChanged">
                     <ComboBoxItem Name="Trace">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="Images/bug.png" Height="16" Width="16" />
+                            <!--<Image Source="Images/bug.png" Height="16" Width="16" />-->
                             <Label Content=" Trace" Padding="0" />
                         </StackPanel>
                     </ComboBoxItem>
                     <ComboBoxItem>
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="Images/information-white.png" Height="16" Width="16" />
+                            <!--<Image Source="Images/information-white.png" Height="16" Width="16" />-->
                             <Label Content=" Debug" Padding="0" />
                         </StackPanel>
                     </ComboBoxItem>
                     <ComboBoxItem>
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="Images/information.png" Height="16" Width="16" />
+                            <!--<Image Source="Images/information.png" Height="16" Width="16" />-->
                             <Label Content=" Info" Padding="0" />
                         </StackPanel>
                     </ComboBoxItem>
                     <ComboBoxItem>
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="Images/exclamation.png" Height="16" Width="16" />
+                            <!--<Image Source="Images/exclamation.png" Height="16" Width="16" />-->
                             <Label Content=" Warn" Padding="0" />
                         </StackPanel>
                     </ComboBoxItem>
                     <ComboBoxItem>
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="Images/exclamation-red.png" Height="16" Width="16" />
+                            <!--<Image Source="Images/exclamation-red.png" Height="16" Width="16" />-->
                             <Label Content=" Error" Padding="0" />
                         </StackPanel>
                     </ComboBoxItem>
                     <ComboBoxItem>
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="Images/fire.png" Height="16" Width="16" />
+                            <!--<Image Source="Images/fire.png" Height="16" Width="16" />-->
                             <Label Content=" Fatal" Padding="0" />
                         </StackPanel>
                     </ComboBoxItem>
@@ -51,30 +51,30 @@
 
                 <Border x:Name="bClear" Margin="5,0,0,0" Height="24" BorderThickness="1" CornerRadius="3,3,3,3"  MouseEnter="btnClear_MouseEnter" MouseLeave="btnClear_MouseLeave" ToolTip="Clears the view. (CTRL+X)" >
                     <StackPanel x:Name="btnClear" Orientation="Horizontal" MouseLeftButtonUp="btnClear_MouseLeftButtonUp">
-                        <Image HorizontalAlignment="Left" Source="Images/table-delete-row.png" Height="16" Width="16" Margin="10, 0, 0, 0"/>
+                        <!--<Image HorizontalAlignment="Left" Source="Images/table-delete-row.png" Height="16" Width="16" Margin="10, 0, 0, 0"/>-->
                         <Label Content="Clear" Foreground="#FF4F4F4F" Margin="0,-3,5,0"/>
                     </StackPanel>
                 </Border>
 
                 <Border x:Name="bAutoScroll" Margin="2,0,0,0" Height="24" BorderThickness="1" CornerRadius="3,3,3,3" MouseEnter="btnScroll_MouseEnter" MouseLeave="btnScroll_MouseLeave" MouseLeftButtonUp="bAutoScroll_MouseLeftButtonUp" ToolTip="Automatically scrolls to the end of the view. (CTRL+W)">
                     <StackPanel x:Name="btnScroll" Orientation="Horizontal" >
-                        <Image HorizontalAlignment="Left" Source="Images/application-dock-270.png" Height="16" Width="16" Margin="10, 0, 0, 0"/>
+                        <!--<Image HorizontalAlignment="Left" Source="Images/application-dock-270.png" Height="16" Width="16" Margin="10, 0, 0, 0"/>-->
                         <Label Content="Auto scroll" Foreground="#FF4F4F4F" Margin="0,-3,5,0"/>
                     </StackPanel>
                 </Border>
 
                 <Border x:Name="bDummy" Margin="2,0,0,0" Height="24" BorderThickness="1" CornerRadius="3,3,3,3" MouseLeftButtonUp="BDummy_OnMouseLeftButtonUp">
                     <StackPanel x:Name="btnDummy" Orientation="Horizontal" >
-                        <Image HorizontalAlignment="Left" Source="Images/application-dock-270.png" Height="16" Width="16" Margin="10, 0, 0, 0"/>
+                        <!--<Image HorizontalAlignment="Left" Source="Images/application-dock-270.png" Height="16" Width="16" Margin="10, 0, 0, 0"/>-->
                         <Label Content="Dummy" Foreground="#FF4F4F4F" Margin="0,-3,5,0"/>
                     </StackPanel>
                 </Border>
 
                 <StackPanel x:Name="SPSearch" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,0">
                     <TextBox x:Name="txtSearch" Width="150" Height="25" Margin="5,0,20,0" VerticalContentAlignment="Center" Padding="17,0,0,0" SelectionBrush="#FF686868" Foreground="#FF1D1D1D" Text="" TextChanged="TxtSearch_OnTextChanged">
-                        <TextBox.Background>
-                            <ImageBrush ImageSource="Images/magnifier.png" AlignmentX="Left" Stretch="None" />                                                          
-                        </TextBox.Background>
+                        <!--<TextBox.Background>
+                            <ImageBrush ImageSource="Images/magnifier.png" AlignmentX="Left" Stretch="None" />
+                        </TextBox.Background>-->
                     </TextBox>                    
                 </StackPanel>
 

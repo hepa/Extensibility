@@ -1,7 +1,12 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 
-namespace WPFLog
+namespace ExtensibilityDLL.Common
 {
+    /// <summary>
+    /// Provides general helper methods throughout the project.
+    /// </summary>
     public class Utils
     {
         /// <summary>
@@ -35,6 +40,15 @@ namespace WPFLog
             }
 
             return size;
-        } 
+        }
+
+        /// <summary>
+        /// Gets the install path for the actual application.
+        /// </summary>
+        /// <returns></returns>
+        public static string InstallPath()
+        {
+            return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar;
+        }
     }
 }

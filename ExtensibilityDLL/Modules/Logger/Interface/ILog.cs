@@ -1,7 +1,6 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
-namespace ExtensibilityDLL.Modules.Log
+namespace ExtensibilityDLL.Modules.Logger.Interface
 {
     //Deprecated    
     public interface ILog

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using ExtensibilityDLL.Modules.Logger.Interface;
 
 namespace WPFLog
 {

@@ -9,10 +9,13 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ExtensibilityDLL.Common;
+using ExtensibilityDLL.Modules.Logger.Interface;
+using WPFLog;
 using Control = System.Windows.Forms.Control;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
-namespace WPFLog
+namespace ExtensibilityDLL.Modules.Logger.Implementations.WPFLog
 {
     /// <summary>
     /// Interaction logic for LoggingWindow.xaml
@@ -22,15 +25,29 @@ namespace WPFLog
         private bool _exclusive;
         private bool _autoScroll;
 
+        private Log log;
+
         private volatile int _count, _size;
         private Log.Level _filterLevel = Log.Level.Trace;
         private readonly ICollection<LogListViewItem> _currentLogListViewItems = new List<LogListViewItem>();
 
         public LoggingWindow()
         {
+            InitializeComponent();            
+            //log.NewMessage += AddMessage;
+            //log.ChangedLoggingLevel += RefreshLogLevel;
+
+            SetLogLevelComboBox();
+            RefreshListView();
+            RefreshFilterLevel();
+        }
+
+        public LoggingWindow(WPFLog log)
+        {
             InitializeComponent();
-            Log.NewMessage += AddMessage;
-            Log.ChangedLoggingLevel += RefreshLogLevel;
+            this.log = log;
+            log.NewMessage += AddMessage;
+            //log.ChangedLoggingLevel += RefreshLogLevel;
 
             SetLogLevelComboBox();
             RefreshListView();
@@ -39,7 +56,7 @@ namespace WPFLog
 
         private void RefreshFilterLevel()
         {
-            switch (Log.LoggingLevel)
+            switch (log.LoggingLevel)
             {
                 case Log.Level.Trace:
                     {
@@ -87,7 +104,7 @@ namespace WPFLog
         {
             Dispatcher.BeginInvoke((Action) (() =>
             {
-                switch (Log.LoggingLevel)
+                switch (log.LoggingLevel)
                 {
                     case Log.Level.Trace:
                     {
@@ -125,7 +142,7 @@ namespace WPFLog
 
         #region Business Logic
 
-        private void AddMessage(object item)
+        internal void AddMessage(object item)
         {
             var logItem = item as Log.Entry;            
             if (logItem == null) throw new ArgumentNullException("item");
@@ -152,7 +169,7 @@ namespace WPFLog
                     _size += (logItem).ToString().Length;
 
                     msgCount.Text = _count.ToString(CultureInfo.CurrentCulture);
-                    sumMsgCount.Text = Log.Messages.Count.ToString();                    
+                    sumMsgCount.Text = log.Messages.Count.ToString();                    
                     
                     var fs = Utils.GetFileSize(_size).Split(' ');
                     msgSize.Text = fs[0];
@@ -175,7 +192,7 @@ namespace WPFLog
         /// <exception cref="System.NotImplementedException"></exception>
         private void WindowClosing(object sender, CancelEventArgs e)
         {
-            Log.NewMessage -= AddMessage;
+            log.NewMessage -= AddMessage;
         }
 
         private bool IsContainsLevel(Log.Level l)
@@ -200,7 +217,7 @@ namespace WPFLog
             {
                 foreach (
                     var entry in
-                        Log.Messages.ToArray().Reverse().OrderBy(x => x.Time).Where(x => IsContainsLevel(x.Level)))
+                        log.Messages.ToArray().Reverse().OrderBy(x => x.Time).Where(x => IsContainsLevel(x.Level)))
                 {
                     logListView.Items.Add(new LogListViewItem(entry));
                     _count++;
@@ -211,7 +228,7 @@ namespace WPFLog
             {
                 foreach (
                     var entry in
-                        Log.Messages.ToArray().Reverse().OrderBy(x => x.Time).Where(x => (x.Level <= _filterLevel)))
+                        log.Messages.ToArray().Reverse().OrderBy(x => x.Time).Where(x => (x.Level <= _filterLevel)))
                 {
                     logListView.Items.Add(new LogListViewItem(entry));
                     _count++;
@@ -225,7 +242,7 @@ namespace WPFLog
             msgUnit.Text = fs[1];                
 
             msgCount.Text = _count.ToString(CultureInfo.InvariantCulture);
-            sumMsgCount.Text = Log.Messages.Count.ToString(CultureInfo.InvariantCulture);
+            sumMsgCount.Text = log.Messages.Count.ToString(CultureInfo.InvariantCulture);
 
             _currentLogListViewItems.Clear();
             foreach (var item in logListView.Items)
@@ -655,10 +672,10 @@ namespace WPFLog
 
         private void btnClear_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            while (!Log.Messages.IsEmpty)
+            while (!log.Messages.IsEmpty)
             {
                 Log.Entry entry;
-                Log.Messages.TryTake(out entry);
+                log.Messages.TryTake(out entry);
             }
             logListView.Items.Clear();
             msgCount.Text = "0";

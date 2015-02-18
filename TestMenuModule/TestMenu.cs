@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using ExtensibilityDLL.Modules.Menu;
+using Menu = ExtensibilityDLL.Modules.Menu.Menu;
 
 namespace TestMenuModule
 {
-    public class TestMenu : IMenu
+    public class TestMenu : Menu
     {
         public string Name
         {
@@ -18,6 +19,8 @@ namespace TestMenuModule
         public string Icon { get; private set; }
         public string Developer { get; private set; }
         public Version Version { get; private set; }
+
+        public bool IsEnabled { get; set; }
 
         public MenuItem GetMenuItem()
         {

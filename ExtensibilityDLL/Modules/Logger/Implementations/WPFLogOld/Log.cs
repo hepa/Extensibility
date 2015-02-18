@@ -10,7 +10,7 @@ using ExtensibilityDLL.Modules.Menu;
 namespace WPFLog
 {
     //TODO outsource this to the Interface.Log class.
-    public class Log : ExtensibilityDLL.Modules.Log.Log, IMenu
+    public class Log 
     {
         /// <summary>
         /// The current logging level.

@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace ExtensibilityDLL.Modules.Menu
 {
-    public interface IMenu : IModule
+    public interface Menu : IModule
     {
         /// <summary>
         /// 
